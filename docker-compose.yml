@@ -1,0 +1,78 @@
+---
+services:
+  httpd:
+    build:
+      context: ./httpd
+    ports:
+      - 127.0.0.1:${HTTPD_HOST_PORT}:80
+      - 127.0.0.1:${HTTPD_HOST_SSL_PORT}:443
+    volumes:
+      - ./DocumentRoot:/var/www/html:z
+      - phpmyadmin_data:/var/www/phpmyadmin:ro
+      - certs:/certs:ro
+    depends_on:
+      sslcert-generator:
+        condition: service_completed_successfully
+      php:
+        condition: service_started
+
+  database:
+    image: docker.io/mysql:${MYSQL_VERSION}
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - 127.0.0.1:${MYSQL_HOST_PORT}:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  php:
+    build:
+      context: ./php
+      target: post
+      args:
+        PHP_VERSION: ${PHP_FPM_VERSION}-fpm
+    user: ${PHP_FPM_RUNTIME_UID}
+    environment:
+      PHP_FPM_MAX_EXECUTION_TIME: ${PHP_FPM_MAX_EXECUTION_TIME}
+      PHP_FPM_MEMORY_LIMIT: ${PHP_FPM_MEMORY_LIMIT}
+      PHP_FPM_POST_MAX_SIZE: ${PHP_FPM_POST_MAX_SIZE}
+      PHP_FPM_UPLOAD_LIMIT: ${PHP_FPM_UPLOAD_LIMIT}
+      PHP_FPM_ERROR_REPORTING: ${PHP_FPM_ERROR_REPORTING}
+      PHP_FPM_DISPLAY_ERRORS: ${PHP_FPM_DISPLAY_ERRORS}
+    volumes:
+      - ./DocumentRoot:/var/www/html:z
+
+  phpmyadmin:
+    image: docker.io/phpmyadmin:fpm
+    environment:
+      PMA_HOST: database
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      MAX_EXECUTION_TIME: ${PHP_FPM_MAX_EXECUTION_TIME}
+      MEMORY_LIMIT: ${PHP_FPM_MEMORY_LIMIT}
+      UPLOAD_LIMIT: ${PHP_FPM_UPLOAD_LIMIT}
+    volumes:
+      - phpmyadmin_data:/var/www/html:ro
+    depends_on:
+      - database
+
+  sslcert-generator:
+    image: docker.io/egdoc/docker-sslcert-generator
+    environment:
+      CERT_DAYS: ${CERT_DAYS}
+      CERT_COUNTRY: ${CERT_COUNTRY}
+      CERT_STATE: ${CERT_STATE}
+      CERT_LOCALITY: ${CERT_LOCALITY}
+      CERT_ORGANIZATION_NAME: ${CERT_ORGANIZATION_NAME}
+      CERT_COMMON_NAME: ${CERT_COMMON_NAME}
+    volumes:
+      - certs:/certs
+
+volumes:
+  certs:
+  dbdata:
+  phpmyadmin_data:
