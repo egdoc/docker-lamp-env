@@ -29,6 +29,24 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
 
+  database-cron-backup:
+    image: fradelg/mysql-cron-backup
+    depends_on:
+      - database
+    volumes:
+      - ./db-backup:/backup:z
+    environment:
+      MYSQL_HOST: database
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASS: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MAX_BACKUPS: ${MYSQL_CRON_BACKUP_MAX_BACKUPS}
+      EXIT_BACKUP: ${MYSQL_CRON_BACKUP_EXIT_BACKUP}
+      GZIP_LEVEL: ${MYSQL_CRON_BACKUP_GZIP_LEVEL}
+      CRON_TIME: ${MYSQL_CRON_BACKUP_CRON_TIME}
+      MYSQLDUMP_OPTS: ${MYSQL_CRON_BACKUP_MYSQDUMP_OPTS}
+    restart: unless-stopped
+
   php:
     build:
       context: ./php
