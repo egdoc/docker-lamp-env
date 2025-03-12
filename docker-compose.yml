@@ -9,12 +9,8 @@ services:
     volumes:
       - ./DocumentRoot:/var/www/html:z
       - phpmyadmin_data:/var/www/phpmyadmin:ro
-      - certs:/certs:ro
     depends_on:
-      sslcert-generator:
-        condition: service_completed_successfully
-      php:
-        condition: service_started
+      - php
 
   database:
     image: docker.io/mysql:${MYSQL_VERSION}
@@ -78,19 +74,6 @@ services:
     depends_on:
       - database
 
-  sslcert-generator:
-    image: docker.io/egdoc/docker-sslcert-generator
-    environment:
-      CERT_DAYS: ${CERT_DAYS}
-      CERT_COUNTRY: ${CERT_COUNTRY}
-      CERT_STATE: ${CERT_STATE}
-      CERT_LOCALITY: ${CERT_LOCALITY}
-      CERT_ORGANIZATION_NAME: ${CERT_ORGANIZATION_NAME}
-      CERT_COMMON_NAME: ${CERT_COMMON_NAME}
-    volumes:
-      - certs:/certs
-
 volumes:
-  certs:
   dbdata:
   phpmyadmin_data:
