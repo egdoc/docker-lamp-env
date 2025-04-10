@@ -1,7 +1,8 @@
 ARG PHP_VERSION=7.4-fpm
 FROM docker.io/php:"${PHP_VERSION}" AS base
 LABEL maintainer="egdoc.dev@gmail.com"
-RUN apt-get update && apt-get install -y \
+RUN rm /etc/apt/preferences.d/no-debian-php && \
+apt-get update && apt-get install -y \
   libfreetype6-dev \
   libjpeg62-turbo-dev \
   libpng-dev \
@@ -9,10 +10,13 @@ RUN apt-get update && apt-get install -y \
   libwebp-dev \
   zlib1g-dev \
   libicu-dev \
+  libxml2-dev \
+  php-soap \
   g++
+
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-configure intl
-RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql mysqli zip gd intl
+RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql mysqli zip gd intl soap
 
 FROM base AS php7.4-fpm
 RUN apt-get update && apt-get install -y libmcrypt-dev \
