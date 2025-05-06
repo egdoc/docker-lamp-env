@@ -13,7 +13,7 @@ services:
       - php
 
   database:
-    image: docker.io/mysql:${MYSQL_VERSION}
+    image: docker.io/mariadb:${MYSQL_VERSION}
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
