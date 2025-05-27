@@ -8,13 +8,14 @@ apt-get update && apt-get install -y \
   libpng-dev \
   libzip-dev \
   libwebp-dev \
+  libavif-dev \
   zlib1g-dev \
   libicu-dev \
   libxml2-dev \
   php-soap \
   g++
 
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-avif
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install -j$(nproc) pdo pdo_mysql mysqli zip gd intl soap
 
