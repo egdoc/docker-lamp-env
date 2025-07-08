@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.4-fpm
+ARG PHP_VERSION
 FROM docker.io/php:"${PHP_VERSION}" AS base
 LABEL maintainer="egdoc.dev@gmail.com"
 RUN rm /etc/apt/preferences.d/no-debian-php && \
@@ -28,6 +28,7 @@ FROM base AS php8.0-fpm
 FROM base AS php8.1-fpm 
 FROM base AS php8.2-fpm
 FROM base AS php8.3-fpm
+FROM base AS php8.4-fpm
 
 FROM "php${PHP_VERSION}" AS post
 COPY php.ini /usr/local/etc/php/conf.d/php.ini
