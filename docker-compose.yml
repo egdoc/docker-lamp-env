@@ -9,8 +9,10 @@ services:
     volumes:
       - ./DocumentRoot:/var/www/html:z
       - phpmyadmin_data:/var/www/phpmyadmin:ro
+      - certs:/certs:ro
     depends_on:
       - php
+      - sslcert-generator
 
   database:
     image: docker.io/mariadb:${MYSQL_VERSION}
@@ -73,6 +75,20 @@ services:
     depends_on:
       - database
 
+  sslcert-generator:
+    image: docker.io/egdoc/docker-sslcert-generator
+    environment:
+      CERT_DAYS: ${CERT_DAYS}
+      CERT_COUNTRY: ${CERT_COUNTRY}
+      CERT_STATE: ${CERT_STATE}
+      CERT_LOCALITY: ${CERT_LOCALITY}
+      CERT_ORGANIZATION_NAME: ${CERT_ORGANIZATION_NAME}
+      CERT_COMMON_NAME: ${CERT_COMMON_NAME}
+    volumes:
+      - certs:/certs
+
+
 volumes:
   dbdata:
   phpmyadmin_data:
+  certs:
