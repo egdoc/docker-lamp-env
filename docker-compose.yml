@@ -45,11 +45,7 @@ services:
     restart: unless-stopped
 
   php:
-    build:
-      context: ./images/php
-      target: post
-      args:
-        PHP_VERSION: ${PHP_FPM_VERSION}-fpm
+    image: docker.io/egdoc/php:${PHP_FPM_VERSION}-fpm
     user: ${PHP_FPM_RUNTIME_UID}
     environment:
       PHP_FPM_MAX_EXECUTION_TIME: ${PHP_FPM_MAX_EXECUTION_TIME}
