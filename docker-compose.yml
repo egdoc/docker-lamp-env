@@ -11,8 +11,10 @@ services:
       - phpmyadmin_data:/var/www/phpmyadmin:ro
       - certs:/certs:ro
     depends_on:
-      - php
-      - sslcert-generator
+      php:
+        condition: service_started
+      sslcert-generator:
+        condition: service_completed_successfully
 
   database:
     image: docker.io/mariadb:${MYSQL_VERSION}
