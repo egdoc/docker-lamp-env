@@ -1,6 +1,7 @@
 ---
 services:
   httpd:
+    hostname: site.local
     build:
       context: ./images/httpd
     ports:

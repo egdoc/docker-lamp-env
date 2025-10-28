@@ -4,6 +4,7 @@ This project provides a LAMP development environment using Docker/Podman and doc
 ### Usage
 1. Place your project files in the DocumentRoot directory
 2. Copy (and optionally customize) the env.example file to `.env`
+3. Add the `127.0.0.1 site.local` entry to your host machine /etc/hosts file
 3. Build and run containers by running:
 
 ```
