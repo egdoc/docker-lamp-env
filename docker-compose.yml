@@ -9,7 +9,6 @@ services:
       - 127.0.0.1:${HTTPD_HOST_SSL_PORT}:443
     volumes:
       - ./DocumentRoot:/var/www/html:z
-      - phpmyadmin_data:/var/www/phpmyadmin:ro
     depends_on:
       php:
         condition: service_started
@@ -58,7 +57,7 @@ services:
       - ./DocumentRoot:/var/www/html:z
 
   phpmyadmin:
-    image: docker.io/phpmyadmin:fpm
+    image: docker.io/phpmyadmin
     environment:
       PMA_HOST: database
       PMA_USER: ${MYSQL_USER}
@@ -66,12 +65,11 @@ services:
       MAX_EXECUTION_TIME: ${PHP_FPM_MAX_EXECUTION_TIME}
       MEMORY_LIMIT: ${PHP_FPM_MEMORY_LIMIT}
       UPLOAD_LIMIT: ${PHP_FPM_UPLOAD_LIMIT}
-    volumes:
-      - phpmyadmin_data:/var/www/html:ro
+    ports:
+      - 127.0.0.1:${PHPMYADMIN_PORT}:80
     depends_on:
       - database
 
 
 volumes:
   dbdata:
-  phpmyadmin_data:
